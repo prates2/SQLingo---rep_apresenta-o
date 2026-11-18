@@ -76,7 +76,7 @@ export default function Activity() {
 
         <button 
           id="verificarBotao" 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
         >
           Sair
         </button>
