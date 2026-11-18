@@ -149,3 +149,34 @@ class ListaAtividadeDAO:
     def size():
         sql = text("SELECT COUNT(*) FROM listas_atividade;")
         return db.session.execute(sql).scalar()
+
+    @staticmethod
+    def update(id_lista, titulo, descricao, modulo_id):
+        lista = ListaAtividadeDAO.retrieve_by_id(id_lista)
+        if not lista:
+            return None
+
+        sql = text("""
+            UPDATE listas_atividade 
+            SET titulo = :titulo, descricao = :descricao, modulo_id = :modulo_id 
+            WHERE id = :id;
+        """)
+        db.session.execute(sql, {
+            "titulo": titulo,
+            "descricao": descricao,
+            "modulo_id": modulo_id,
+            "id": id_lista
+        })
+        db.session.commit()
+        return ListaAtividadeDAO.retrieve_by_id(id_lista)
+
+    @staticmethod
+    def delete(id_lista):
+        lista = ListaAtividadeDAO.retrieve_by_id(id_lista)
+        if not lista:
+            return None
+
+        sql = text("DELETE FROM listas_atividade WHERE id = :id;")
+        db.session.execute(sql, {"id": id_lista})
+        db.session.commit()
+        return lista
