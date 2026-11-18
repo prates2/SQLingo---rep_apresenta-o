@@ -1,0 +1,100 @@
+@baseUrl = https://sqlingo-rep-apresenta-o.onrender.com
+
+@token = {{login.response.body.access_token}}
+
+@atividadeId = {{criarAtividade.response.body.id}}
+@listaId = 1
+
+
+### =========================================================================
+### Criação de Usuário e Autenticação JWT
+### =========================================================================
+
+### 2.1. Registro de Jogador (POST /jogador)
+POST {{baseUrl}}/jogador
+Content-Type: application/json
+
+{
+  "nome": "arthur",
+  "email": "arthur@email.com",
+  "senha": "123456",
+  "atividades_ids": [1]
+}
+
+### 2.2. Login e Geração de Token JWT (POST /login)
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "arthur@email.com",
+  "senha": "123456"
+}
+
+
+### =========================================================================
+### Operações CRUD Completas (Módulo de Atividades)
+### =========================================================================
+
+### 3.1. Criar Atividade (POST /atividade)
+# @name criarAtividade
+POST {{baseUrl}}/atividade
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Corrida Matinal",
+  "descricao": "Treino aeróbico de 5km no parque"
+}
+
+### 3.2. Listar Todas as Atividades (GET /atividade)
+GET {{baseUrl}}/atividade
+Authorization: Bearer {{token}}
+
+### 3.3. Buscar Atividade por ID (GET /atividade/<id>)
+GET {{baseUrl}}/atividade/{{atividadeId}}
+Authorization: Bearer {{token}}
+
+### 3.4. Atualizar Atividade (PUT /atividade/<id>)
+PUT {{baseUrl}}/atividade/{{atividadeId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Corrida Matinal (Atualizada)",
+  "descricao": "Treino aeróbico de 10km no parque"
+}
+
+### 3.5. Remover Atividade (DELETE /atividade/<id>)
+DELETE {{baseUrl}}/atividade/{{atividadeId}}
+Authorization: Bearer {{token}}
+
+
+### =========================================================================
+### Paginação
+### =========================================================================
+
+### 4.1. Listar Jogadores Paginados (GET /jogador/paginacao)
+GET {{baseUrl}}/jogador/paginacao?pag=1&por_pagina=5
+Authorization: Bearer {{token}}
+
+
+### =========================================================================
+### Relacionamentos (1:N e N:N)
+### =========================================================================
+
+### 5.1. Relacionamento Um-para-Muitos 1:N (GET /lista-atividade/<id_lista>/atividades)
+GET {{baseUrl}}/lista-atividade/{{listaId}}/atividades
+Authorization: Bearer {{token}}
+
+### 5.2. Relacionamento Muitos-para-Muitos N:N (POST /jogador com múltiplas atividades)
+POST {{baseUrl}}/jogador
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "nome": "Jogador Relacionamento NN",
+  "email": "jogador.nn@email.com",
+  "senha": "123",
+  "atividades_ids": [1, 2]
+}
